@@ -20,10 +20,26 @@
 
         <?php
         //MySQLサーバへの接続とデータベースの選択
-        $mysqli = mysqli_connect('localhost','root','','jikken1');
-        if($mysqli->connect_error){
-            die($mysqli->connect_error);
+        $dsn='mysql:dbname=jikken1;host=localhost;charset=utf8';
+        $user='root';
+        $password= '';
+        try{
+            $dbh =new PDO($dsn,$user,$password);
+            $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql = "SELECT * FROM simple_bbs";
+            $stmt=$dbh->prepare($sql);
+            $stmt->execute();
+            $count = $stmt->rowCount();
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                $data[]=$row;
+            }
+            echo '処理が完了しました';
+        }catch(PDOException $e){
+            print ($e->getMessage());
+            die();
         }
+        
+       
 
         //テーブルへの登録
         if(isset($_POST['users_names'])){
@@ -42,11 +58,17 @@
         if(!$result){
             die($mysql -> error);
         }
-        while($row = $result -> fetch_assoc()){
-            print($row['users_names'].':'.$row['users_comments']);
-            print("<hr>\n");
-        }
+        ?>
 
+        <?php foreach($data as $row): ?>
+        <tr>
+            <td><?php echo $row['id'];?></td>
+            <td><?php echo $row['username'];?></td>
+            <td><?php echo $row['age'];?></td>
+            <td><?php echo $row['mail'];?></td>
+        </tr>
+        <?php endforeach; ?>
+        <?php
         //MySQLサーバの接続を閉じる
         $mysqli -> close();
         ?>
