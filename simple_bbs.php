@@ -51,9 +51,8 @@
                 die($dbh ->error);
             }
         }
-
         ?>
-    <table>
+    <table border="1">
         <tr><th>name</th><th>comment</th><th>delete_button</th></tr>
         <?php foreach($data as $row): ?>
         <tr>
@@ -61,9 +60,11 @@
             <td><?php echo $row['users_comments'];?></td>
             <td>
         <form action="delete.php" method="post">
-        <input type="submit" value="削除する" name="delete_comment">
+            <div align='center'>
+        <input type="submit" value="削除する" name="delete_comment" >
         <input type="hidden" name="id" value="<?=$row['id']?>">
-            </td>
+        </div>        
+    </td>
         </tr>
         <?php endforeach; ?>
         </table>        
