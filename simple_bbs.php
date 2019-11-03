@@ -7,15 +7,17 @@
         <body>
         <form action="simple_bbs.php" method="post">
         <p>
-        名前: <input type="text" name="users_names" size="40">
-        </p>
-        <p>
+        名前:<br>
+        <input type="text" name="users_names" size="40">
+        </p><p>
         コメント: <br>
-        <textarea name="users_comment" rows="4" cols="50"></textarea>
+        <textarea name="users_comments" rows="4" cols="50"></textarea>
+        </p><p>
+        <input type="submit" name="投稿" >
+        </p><p>
+        <input type="reset" value="リセット">
         </p>
-        <p>
-        <input type="submit" name="投稿" ><input type="reset" value="リセット">
-        </p>
+        
         </form>
 
         <?php
@@ -26,7 +28,7 @@
         try{
             $dbh =new PDO($dsn,$user,$password);
             $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "SELECT * FROM simple_bbs";
+            $sql = "SELECT * FROM simple_bbs where delete_flag=0";
             $stmt=$dbh->prepare($sql);
             $stmt->execute();
             $count = $stmt->rowCount();
@@ -38,39 +40,32 @@
             print ($e->getMessage());
             die();
         }
-        
-       
 
         //テーブルへの登録
         if(isset($_POST['users_names'])){
             $name = @$_POST['users_names'];
             $comment = @$_POST['users_comments'];
-            $sql = "INSERT INTO simple_bbs VALUES('$name', '$comment',0 );";
-            $result = $mysqli ->query($sql);
+            $sql = "INSERT INTO simple_bbs VALUES( '','$name', '$comment',0 );";
+            $result = $dbh ->query($sql);
             if(!$result){
-                die($mysqli ->error);
+                die($dbh ->error);
             }
         }
 
-        //掲示板データの整形
-        $sql = 'SELECT * FROM simple_bbs where delete_flag=0 ';
-        $result = $mysqli -> query($sql);
-        if(!$result){
-            die($mysql -> error);
-        }
         ?>
-
+    <table>
+        <tr><th>name</th><th>comment</th><th>delete_button</th></tr>
         <?php foreach($data as $row): ?>
         <tr>
-            <td><?php echo $row['id'];?></td>
-            <td><?php echo $row['username'];?></td>
-            <td><?php echo $row['age'];?></td>
-            <td><?php echo $row['mail'];?></td>
+            <td><?php echo $row['users_names'];?></td>
+            <td><?php echo $row['users_comments'];?></td>
+            <td>
+        <form action="delete.php" method="post">
+        <input type="submit" value="削除する" name="delete_comment">
+        <input type="hidden" name="id" value="<?=$row['id']?>">
+            </td>
         </tr>
         <?php endforeach; ?>
-        <?php
-        //MySQLサーバの接続を閉じる
-        $mysqli -> close();
-        ?>
+        </table>        
         </body>
     </html>
