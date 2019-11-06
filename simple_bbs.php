@@ -16,8 +16,7 @@
         <input type="submit" name="投稿" >
         </p><p>
         <input type="reset" value="リセット">
-        </p>
-        
+        </p>        
         </form>
 
         <?php
@@ -52,21 +51,21 @@
             }
         }
         ?>
+
     <table border="1">
         <tr><th>name</th><th>comment</th><th>delete_button</th></tr>
-        <?php foreach($data as $row): ?>
-        <tr>
+        <?php foreach($data as $row){ ?>
+            <tr>
             <td><?php echo $row['users_names'];?></td>
             <td><?php echo $row['users_comments'];?></td>
             <td>
-        <form action="delete.php" method="post">
-            <div align='center'>
-        <input type="submit" value="削除する" name="delete_comment" >
+            <form action="delete.php" method="get">
+        <input type="submit" value="削除する" >
         <input type="hidden" name="id" value="<?=$row['id']?>">
-        </div>        
+        </form>
     </td>
         </tr>
-        <?php endforeach; ?>
+        <?php }?>
         </table>        
         </body>
     </html>

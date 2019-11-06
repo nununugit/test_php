@@ -18,11 +18,11 @@ try{
     die();
 }
 
-if(isset($_POST['id'])){
-            $id =  @$_POST['id'];
-            $name = @$_POST['users_names'];
-            $comment = @$_POST['users_comments'];
-            $sql = "UPDATE simple_bbs SET delete_flag = 1 WHERE id=$id";
+if(isset($_GET['id'])){
+            $id =  @$_GET['id'];
+            $name = @$_GET['users_names'];
+            $comment = @$_GET['users_comments'];
+            $sql = "UPDATE simple_bbs SET delete_flag = 1 WHERE id=$id;";
             $result = $dbh ->query($sql);
             if(!$result){
                 die($dbh ->error);
