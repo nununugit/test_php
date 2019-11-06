@@ -36,8 +36,37 @@
                         die($dbh ->error);
                     }
         }if(isset($_POST['delete_all'])){
-                    $sql = "INSERT INTO simple_bbs VALUES( '','sucess', 'sucess',0 );";
+                    $sql = "DROP TABLE `simple_bbs`;CREATE TABLE `simple_bbs` (
+                        `id` int(11) NOT NULL,
+                        `users_names` varchar(11) NOT NULL,
+                        `users_comments` text NOT NULL,
+                        `delete_flag` tinyint(1) NOT NULL DEFAULT 0
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                      
+                      --
+                      -- ダンプしたテーブルのインデックス
+                      --
+                      
+                      --
+                      -- テーブルのインデックス `simple_bbs`
+                      --
+                      ALTER TABLE `simple_bbs`
+                        ADD PRIMARY KEY (`id`);
+                      
+                      --
+                      -- ダンプしたテーブルのAUTO_INCREMENT
+                      --
+                      
+                      --
+                      -- テーブルのAUTO_INCREMENT `simple_bbs`
+                      --
+                      ALTER TABLE `simple_bbs`
+                        MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+                      COMMIT;
+                      INSERT INTO simple_bbs VALUES( '','master', 'first comment',0 );
+                      ";
                     $result = $dbh ->query($sql);
+                    echo "success";
                     if(!$result){
                         die($dbh ->error);
                     }
@@ -64,19 +93,19 @@
         <input type="reset" value="リセット">
         </p>        
         </form>
-        <form action="simple_bbs.php" method="get">
+        <form action="simple_bbs.php" method="post">
         <p>
         <input type="submit" value="全削除" name="delete_all"" >
         </p>     
         </form>
-        <table border="1">
+        <table>
         <tr><th>name</th><th>comment</th><th>delete_button</th></tr>
         <?php foreach($data as $row){ ?>
             <tr>
             <td><?php echo $row['users_names'];?></td>
             <td><?php echo $row['users_comments'];?></td>
             <td>
-            <form action="simple_bbs.php" method="post">
+            <form action="simple_bbs.php" method="get">
         <input type="submit" value="削除する" >
         <input type="hidden" name="id" value="<?=$row['id']?>">
         </form>
