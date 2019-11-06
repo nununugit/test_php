@@ -23,11 +23,17 @@
         if(isset($_POST['users_names'])){
             $name = @$_POST['users_names'];
             $comment = @$_POST['users_comments'];
-            $sql = "INSERT INTO simple_bbs VALUES( '','$name', '$comment',0 );";
+            if (empty($name)||empty($comment)){
+                echo "名前かコメントを入力してください。";
+            }else{
+            date_default_timezone_set('Asia/Tokyo');
+            $timestamp = time() ;
+            $now= date( "Y/m/d H:i:s", $timestamp ) ;
+            $sql = "INSERT INTO simple_bbs VALUES( '','$name', '$comment',0,'$now' );";
             $result = $dbh ->query($sql);
             if(!$result){
                 die($dbh ->error);
-            }
+            }}
         }if(isset($_GET['id'])){
                     $id =  @$_GET['id'];
                     $sql = "UPDATE simple_bbs SET delete_flag = 1 WHERE id=$id;";
@@ -36,34 +42,32 @@
                         die($dbh ->error);
                     }
         }if(isset($_POST['delete_all'])){
-                    $sql = "DROP TABLE `simple_bbs`;CREATE TABLE `simple_bbs` (
-                        `id` int(11) NOT NULL,
-                        `users_names` varchar(11) NOT NULL,
-                        `users_comments` text NOT NULL,
-                        `delete_flag` tinyint(1) NOT NULL DEFAULT 0
-                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-                      
-                      --
-                      -- ダンプしたテーブルのインデックス
-                      --
-                      
-                      --
-                      -- テーブルのインデックス `simple_bbs`
-                      --
-                      ALTER TABLE `simple_bbs`
-                        ADD PRIMARY KEY (`id`);
-                      
-                      --
-                      -- ダンプしたテーブルのAUTO_INCREMENT
-                      --
-                      
-                      --
-                      -- テーブルのAUTO_INCREMENT `simple_bbs`
-                      --
-                      ALTER TABLE `simple_bbs`
-                        MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-                      COMMIT;
-                      INSERT INTO simple_bbs VALUES( '','master', 'first comment',0 );
+            $timestamp = time() ;
+            $now= date( "Y/m/d H:i:s", $timestamp ) ;
+            $sql = "INSERT INTO simple_bbs VALUES( '','$name', '$comment',0,'$now' );";
+                    $sql = "DROP TABLE `simple_bbs`;
+                    CREATE TABLE `simple_bbs` (
+                      `id` int(11) NOT NULL,
+                      `users_names` varchar(11) NOT NULL,
+                      `users_comments` text NOT NULL,
+                      `delete_flag` tinyint(1) NOT NULL DEFAULT 0,
+                      `post_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                    
+                    ALTER TABLE `simple_bbs`
+                      ADD PRIMARY KEY (`id`);
+                    
+                    --
+                    -- ダンプしたテーブルのAUTO_INCREMENT
+                    --
+                    
+                    --
+                    -- テーブルのAUTO_INCREMENT `simple_bbs`
+                    --
+                    ALTER TABLE `simple_bbs`
+                      MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+                    COMMIT;
+                      INSERT INTO simple_bbs VALUES( '','master', 'first comment',0,'$now' );
                       ";
                     $result = $dbh ->query($sql);
                     echo "success";
@@ -99,7 +103,7 @@
         </p>     
         </form>
         <table>
-        <tr><th>name</th><th>comment</th><th>delete_button</th></tr>
+        <tr><th>投稿者</th><th>コメント</th><th>コメント削除</th><th>投稿日</th></tr>
         <?php foreach($data as $row){ ?>
             <tr>
             <td><?php echo $row['users_names'];?></td>
@@ -108,6 +112,7 @@
             <form action="simple_bbs.php" method="get">
         <input type="submit" value="削除する" >
         <input type="hidden" name="id" value="<?=$row['id']?>">
+        <td><?php echo $row['post_date'];?></td>
         </form>
     </td>
         </tr>
@@ -115,5 +120,3 @@
         </table>        
         </body>
     </html>
-
-        
