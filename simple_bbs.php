@@ -18,7 +18,11 @@
         <input type="reset" value="リセット">
         </p>        
         </form>
-
+        <form action="simple_bbs.php" method="post">
+        <p>
+        <input type="submit" name="全削除" >
+        </p>     
+        </form>
         <?php
         //MySQLサーバへの接続とデータベースの選択
         $dsn='mysql:dbname=jikken1;host=localhost;charset=utf8';
@@ -50,6 +54,14 @@
                 die($dbh ->error);
             }
         }
+        if(isset($_GET['id'])){
+                    $id =  @$_GET['id'];
+                    $sql = "UPDATE simple_bbs SET delete_flag = 1 WHERE id=$id;";
+                    $result = $dbh ->query($sql);
+                    if(!$result){
+                        die($dbh ->error);
+                    }
+                }
         ?>
 
     <table border="1">
@@ -59,7 +71,7 @@
             <td><?php echo $row['users_names'];?></td>
             <td><?php echo $row['users_comments'];?></td>
             <td>
-            <form action="delete.php" method="get">
+            <form action="simple_bbs.php" method="get">
         <input type="submit" value="削除する" >
         <input type="hidden" name="id" value="<?=$row['id']?>">
         </form>
