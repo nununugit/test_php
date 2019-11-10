@@ -1,11 +1,12 @@
 <?php
         //MySQLサーバへの接続とデータベースの選択
-        $dsn='mysql:dbname=jikken1;host=localhost;charset=utf8';
+        $dsn='mysql:dbname=kadai;host=localhost;charset=utf8';
         $user='root';
         $password= '';
         try{
             $dbh =new PDO($dsn,$user,$password);
             $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql =  "SELECT * FROM users_datas";
             $stmt=$dbh->prepare($sql);
             $stmt->execute();
             $count = $stmt->rowCount();
@@ -17,23 +18,27 @@
             die();
         }
             //テーブルへの登録
-        if(isset($_POST['user_name'])){
-            $name = @$_POST['user_name'];
+        if(isset($_POST['regist_name'])){
+            $name = @$_POST['regist_name'];
             $pass1 = @$_POST['user_pass1'];
             $pass2 = @$_POST['user_pass2'];
             if (empty($name)||empty($pass1)||empty($pass2)){
                 echo "<br>";
                 echo '<div class="alert alert-primary" role="alert"><strong>文字を入力してください</strong></div>';
             }else if($pass1==$pass2){
-                $sql = "INSERT INTO users_datas VALUES('', '$name', '$pass1');";
-                $result = $dbh ->query($sql);
-                if(!$result){
-                    die($dbh ->error);
-                
-                header('Location: ./bbs_login.php');}
-            
+                $stmt = $dbh->prepare("SELECT * FROM users_datas WHERE user_name =:name;");
+                $stmt->execute([':name' => $name]);
+                $row = $stmt->fetch();
+                if($row){
+                    echo "ユーザは既に存在します。";
+                    
+                }else{
+                    $sql = "INSERT INTO users_datas VALUES('', '$name', '$pass1');";
+                    $result = $dbh ->query($sql);
+                    header('Location: ./bbs_index.php');
+                }
             }
-            }?>
+        }?>
     
 <!DOCTYPE html>
 <html>
@@ -43,11 +48,12 @@
         <title>ひとこと掲示板login</title>
     </head>
         <body>
-        <form action="bbs_index.php" method="post">
+        <form action="bbs_registration.php" method="post">
         <div class="form-group"><p>
         名前:<br>
-        <input type="text" placeholder="ユーザ名" name="user_name" size="15">
+        <input type="text" placeholder="ユーザ名" name="regist_name" size="15">
         </p>
+
         <p>
         パスワード: <br>
         <input type="text" placeholder="ユーザのパスワード" name="user_pass1" cols="20">
