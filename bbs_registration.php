@@ -31,7 +31,6 @@
                 $row = $stmt->fetch();
                 if($row){
                     echo "ユーザは既に存在します。";
-                    
                 }else{
                     $sql = "INSERT INTO users_datas VALUES('', '$name', '$pass1');";
                     $result = $dbh ->query($sql);
