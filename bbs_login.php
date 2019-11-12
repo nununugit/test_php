@@ -25,17 +25,23 @@
                 echo "<br>";
                 echo '<div class="alert alert-primary" role="alert"><strong>文字を入力してください</strong></div>';
             }else{
-            $sql = "SELECT * FROM users_datas WHERE user_name ='$name' AND user_pass = '$pass';";
-            $result = $dbh ->query($sql);
-            if($result){
+            $stmt = $dbh->prepare("SELECT * FROM users_datas WHERE user_name = :name AND user_pass=:pass;");
+            $stmt->execute([':name' => $name,':pass'=> $pass]);
+            $row = $stmt->fetch();
+            if($row){
+                session_start();
+                $_SESSION['profile']=array('user_id'=>$row['uid'],'user_name'=>$row['user_name']);
                 header('Location: ./bbs_index.php');
-            }
-            if(!$result){
-                header('Location: ./bbs_login.php');
+                
+            }else{
+                echo "ログイン失敗";
             }
            
-        }}?>
+        }
+    }
+        ?>
     
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -49,6 +55,7 @@
         名前:<br>
         <input type="text" placeholder="ユーザ名" name="user_name" size="15">
         </p>
+
         <p>
         パスワード: <br>
         <input type="text" placeholder="ユーザのパスワード" name="user_pass" cols="20">
@@ -57,6 +64,8 @@
         <input class="btn btn-primary mb-2" type="submit" name="投稿" >
         </form>
         
+    <a href="./bbs_registration.php">登録はこちら</a>    
+
         </div>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
  <!-- Bootstrap Javascript(jQuery含む) -->

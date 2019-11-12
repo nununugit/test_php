@@ -34,7 +34,7 @@
                 }else{
                     $sql = "INSERT INTO users_datas VALUES('', '$name', '$pass1');";
                     $result = $dbh ->query($sql);
-                    header('Location: ./bbs_index.php');
+                    header('Location: ./bbs_login.php');
                 }
             }
         }?>
@@ -65,6 +65,9 @@
 
         <input class="btn btn-primary mb-2" type="submit" name="投稿" >
         </form>
+
+        <a href="./bbs_login.php">ログインはこちら</a>    
+
         
         </div>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
