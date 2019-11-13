@@ -1,8 +1,11 @@
-<?php 
+<?php
+
 session_start();
 $session_user = $_SESSION['profile']['user_name'];
 $session_uid = $_SESSION['profile']['user_id'];
+if($session_uid){
 echo "<h1>ようこそ".$_SESSION['profile']['user_name']."さん</h1>";
+
         //MySQLサーバへの接続とデータベースの選択
         $dsn='mysql:dbname=kadai;host=localhost;charset=utf8';
         $user='root';
@@ -27,7 +30,6 @@ echo "<h1>ようこそ".$_SESSION['profile']['user_name']."さん</h1>";
             $comment = @$_POST['todo_value'];
             echo $title;
             echo $comment;
-            
             if (empty($title)||empty($comment)){
                 echo "<br>";
                 echo '<div class="alert alert-primary" role="alert"><strong>文字を入力してください</strong></div>';
@@ -44,8 +46,8 @@ echo "<h1>ようこそ".$_SESSION['profile']['user_name']."さん</h1>";
         }
            
             //個別削除
-        }if(isset($_GET['todo_id'])){
-                    $todo_id =  @$_GET['todo_id'];
+        }if(isset($_GET['todo_id1'])){
+                    $todo_id =  @$_GET['todo_id1'];
                     $sql = "UPDATE todolist SET delete_flag = 1 WHERE todo_id=$todo_id;";
                     $result = $dbh ->query($sql);
                     if(!$result){
@@ -66,14 +68,21 @@ echo "<h1>ようこそ".$_SESSION['profile']['user_name']."さん</h1>";
                         die($dbh ->error);
                     }
                     header('Location: ./bbs_index.php');
-        }?>
+        }if(isset($_POST['logout'])){
+            session_destroy();
+            header('Location: ./bbs_login.php');
+        }
+    }else{
+        header('Location: ./bbs_login.php');
+    }
+        ?>
     
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>ひとこと掲示板</title>
+        <title>やることリスト</title>
     </head>
         <body>
         <form action="bbs_index.php"  method="post">
@@ -93,29 +102,46 @@ echo "<h1>ようこそ".$_SESSION['profile']['user_name']."さん</h1>";
         
         <form action="bbs_index.php" method="post">
         <input class="btn btn-primary mb-2" type="submit" value="全削除" name="delete_all" >
+        </form>
+        
+        <form action="bbs_index.php" method="post">
+        <input class="btn btn-primary mb-2" type="submit" value="ログアウト" name="logout" >
         </div>
         </form>
         
         <div class="table-responsive">
             <table class="table">
         <thead class="thead-dark">
-        <tr><th>タイトル</th><th>コメント</th><th>コメント削除</th><th>投稿日</th></tr>
+        <tr><th>タイトル</th><th>コメント</th><th>コメント削除</th><th>checkbox</th><th>投稿日</th></tr>
         <?php foreach($data as $row){ ?>
             <tr>
             <td><?php echo htmlentities( $row['todo_title'], ENT_QUOTES, 'UTF-8');?></td>
+            
             <td><?php echo htmlentities( $row['todo_value'], ENT_QUOTES, 'UTF-8');;?></td>
+            
             <td>
             <form action="bbs_index.php" method="get">
             <input type="submit" value="削除する" >
-            <input type="hidden" name="todo_id" value="<?=$row['todo_id']?>">
+            <input type="hidden" name="todo_id1" value="<?=$row['todo_id']?>">
+            </form>    
+        </td>
+            
+
+            <td>
+            <form action="bbs_index.php" method="get">
+            <input type="checkbox" name="chk[]">
+            <input type="submit" value="完了">
+            <input type="hidden" name="todo_id2" value="<?=$row['todo_id']?>">   
             </td>
-        </form>
+            </form>
         <td><?php echo $row['post_date'];?></td>
         </tr>
         <?php }?>        
             </table>
         </div>
-        <a href="./bbs_alltodo.php">みんなの投稿はこちら</a>    
+        <a href="./bbs_alltodo.php">みんなの投稿はこちら</a>
+
+
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
  <!-- Bootstrap Javascript(jQuery含む) -->
  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
