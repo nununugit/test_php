@@ -30,9 +30,10 @@
             $row = $stmt->fetch();
             if($row){
                 session_start();
+                $token_uid = sha1($row['uid']);
+                $token_username = sha1($row['user_name']);
                 $_SESSION['profile']=array('user_id'=>$row['uid'],'user_name'=>$row['user_name']);
                 header('Location: ./bbs_index.php');
-                
             }else{
                 echo "ログイン失敗";
             }
@@ -58,7 +59,7 @@
 
         <p>
         パスワード: <br>
-        <input type="text" placeholder="ユーザのパスワード" name="user_pass" cols="20">
+        <input type="password" placeholder="ユーザのパスワード" name="user_pass" cols="20">
         </p>
 
         <input class="btn btn-primary mb-2" type="submit" name="投稿" >
@@ -67,10 +68,5 @@
     <a href="./bbs_registration.php">登録はこちら</a>    
 
         </div>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
- <!-- Bootstrap Javascript(jQuery含む) -->
- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
         </body>
     </html>
